@@ -1,0 +1,8 @@
+[mysqld]
+
+# All source mysql servers and replicas have to have unique server-id
+server-id = 1
+
+# Only db1 can be replicated, changes to other databases won`t be recorded to binlog
+binlog_do_db = db1
+
