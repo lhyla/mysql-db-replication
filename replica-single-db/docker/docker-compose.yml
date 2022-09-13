@@ -1,0 +1,50 @@
+version: '3.5'
+services:
+  source:
+    image: mysql:8.0.30@sha256:cdf3b62d78d1bbb1d2bd6716895a84014e00716177cbb7e90f6c6a37a21dc796
+    # Source should never be restarted without control.
+    # According to MySql docs (https://dev.mysql.com/doc/refman/8.0/en/replication-options-source.html):
+    # In the event of source failure, all transactions committed on the source have been replicated to the replica (saved to its relay log). An unexpected exit of the source server and failover to the replica is lossless because the replica is up to date. Note, however, that the source cannot be restarted in this scenario and must be discarded, because its binary log might contain uncommitted transactions that would cause a conflict with the replica when externalized after binary log recovery.
+    restart: "no"
+    container_name: source
+    environment:
+      MYSQL_DATABASE: 'db1'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    volumes:
+      - source-data:/var/lib/mysql
+      - ./source-config:/etc/mysql/conf.d
+    networks:
+      - db_network
+
+  replica:
+    image: mysql:8.0.30@sha256:cdf3b62d78d1bbb1d2bd6716895a84014e00716177cbb7e90f6c6a37a21dc796
+    restart: always
+    container_name: replica
+    depends_on:
+      - source
+    environment:
+      MYSQL_DATABASE: 'db1'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3307:3306'
+    volumes:
+      - replica-data:/var/lib/mysql
+      - ./replica-config:/etc/mysql/conf.d
+    networks:
+      - db_network
+
+networks:
+  db_network:
+    name: db_network
+
+volumes:
+  source-data:
+    name: source-data
+  replica-data:
+    name: replica-data

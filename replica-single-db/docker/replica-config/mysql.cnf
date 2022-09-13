@@ -1,0 +1,10 @@
+[mysqld]
+
+# All source mysql servers and replicas have to have unique server-id
+server-id = 2
+
+# So this replica cannot be a source, it does not logs it`s transaction to log_bin. Default value is 1 (at least for mysql8 image)
+log_bin = 0
+
+# Reads only single database from the source (other databases are not replicated anyway, because of binlog_do_db=db1 set on source)
+replicate-do-db = db1
