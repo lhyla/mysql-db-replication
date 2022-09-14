@@ -56,7 +56,7 @@ docker restart source
 docker exec source sh -c "mysql -u root --password=password -D db1 -e 'CREATE TABLE IF NOT EXISTS test (id int); INSERT INTO test values(1); SELECT * FROM test \G;'"
 
 # Get the replicated data from replica: 
-docker exec source sh -c "mysql -u root --password=password -D db1 -e 'SELECT * FROM test \G;'"
+docker exec replica sh -c "mysql -u root --password=password -D db1 -e 'SELECT * FROM test \G;'"
 ```
 
 ## Important info about the sync replication:

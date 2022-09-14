@@ -29,8 +29,11 @@ docker exec replica sh -c "mysql -u root --password=password -e 'SHOW SLAVE STAT
 echo "Source status:"
 docker exec source sh -c "mysql -u root --password=password -e 'SHOW MASTER STATUS \G'"
 
+echo "Source data:"
 docker exec source sh -c "mysql -u root --password=password -D db1 -e 'CREATE TABLE IF NOT EXISTS test (id int); INSERT INTO test values(1); SELECT * FROM test \G;'"
 # Because this is async replication, in case of latency - the table & the record may not be yet replicated!
+
+echo "Replica data:"
 docker exec replica sh -c "mysql -u root --password=password -D db1 -e 'SELECT * FROM test \G;'"
 
 echo "Async replication started!"
